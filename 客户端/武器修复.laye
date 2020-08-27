@@ -1,0 +1,58 @@
+<form>
+	<script><![CDATA[
+	AmarkWqxf ={}
+
+	AmarkWqxf.Init = function(this)
+		local _GUIHandle = GUI:WndCreateScrollWnd(this,"wnd1",0,120,570,440)
+		if _GUIHandle ~= 0 then
+
+		end
+		AmarkWqxf.update()
+	end
+
+	AmarkWqxf.update =function()
+		local script = [[<form default_parent="AmarkWqxf,wnd1">]]
+		for i=1,row do
+			local y1 = 0 + 220*(i-1)
+			local y2 = 0 + 220*(i-1)
+			local y3 = 105 + 220*(i-1)
+			for j=1,3 do
+				local x1 = 20 + 177*(j-1)
+				local x2 = 75 + 170*(j-1)
+				local x3 = 30 + 180*(j-1)
+				local num = (i-1)*3+j
+
+				script = script .. [[<image id="物品黑框]]..num..[["  x="]]..x1..[[" y="]]..y1..[[" w="170" h="130" image="1804100000" fitsize="true" />]]
+				script = script .. [[<image id="图]]..num..[["  x="]]..x2..[[" y="]]..y2..[[" w="210" h="210" image="]]..AmarkWqxfT[num][7]..[[" fitsize="true" />]]
+				script = script .. [[<richedit id="名称]]..num..[[" x="]]..x3..[[" y="]]..y3..[[" w="650" h="100" text="]]..AmarkWqxfT[num][6]..[["/>]]
+				script = script .. [[<richedit id="金刚石]]..num..[[" x=]]..(x1+45)..[[ y=]]..(y3+30)..[[ w=400 h=100 text="#COLORCOLOR_YELLOW#金刚石:]]..AmarkWqxfT[num][4]..[[#COLOREND#" />]]
+				script = script .. [[<richedit id="金币]]..num..[[" x=]]..(x1+45)..[[ y=]]..(y3+50)..[[ w=400 h=100 text="#COLORCOLOR_YELLOW#金币:]]..AmarkWqxfT[num][5]..[[#COLOREND#" />]]
+				script = script .. [[<button id="Anniu_]]..num..[[" x=]]..(x1+38)..[[ y=]]..(y1+180)..[[ image="1800000150" text="确 认 修 复" text_color="RED" visible=true param=]]..num..[[ OnLButtonClick="AmarkWqxf.Xiuf"  />]]
+
+			end
+		end
+		script = script .. [[</form>]]
+		GenFormByString(script)
+	end
+
+	AmarkWqxf.Xiuf = function(this)
+		local param = WndGetParam(this)
+		UI:Lua_SubmitForm("Amark武器修复","Xiuf", param.."")
+	end
+
+	AmarkWqxf.OnCloses = function(this)
+		WndClose(nil, "AmarkWqxf")
+	end
+
+	]]></script>
+	<dialog id="AmarkWqxf" x=150 y=100 w=570 h=583 image="1852100094" title="" magic=1 close="false" center="true" fitsize=true OnInit="AmarkWqxf.Init">
+
+	<image id="名称框" x=1 y=-2 w=568 h=40 type=normal image=1855400000 fitsize=true/>
+	<richedit id="名称" x=230 y=8 w=180 h=100 text="#COLORCOLOR_GOLD#武 器 修 复#COLOREND#" font="SIMLI18" />
+	<image id="大背景"  x="5" y="38" w="558" h="537" image="1851000058" fitsize="true" />
+	<image id="说明黑框1"  x="20" y="45" w="525" h="70" image="1851400083" fitsize="true" />
+	<richedit id="Str2" x=30 y=85 w=650 h=100 text="#COLORCOLOR_RED#修复武器需要破损的武器加金刚石进行修复,还需要100000金币#COLOREND#"/>
+	<richedit id="Str1" x=30 y=60 w=650 h=100 text="#COLORCOLOR_RED#您好,需要修复什么武器呢。#COLOREND#"/>
+	<button id="关闭" x=530 y=-2 image="1850000385" text="" text_color="" visible=true  OnLButtonClick="AmarkWqxf.OnCloses" />
+	</dialog>
+</form>

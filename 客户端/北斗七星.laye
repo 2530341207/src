@@ -1,0 +1,154 @@
+<form>
+    -------------------------------diglog框--------------------------------
+    <dialog id="Triones" w="650" h="420" image="1800830000,1800830001,1800830002,1800830003,1800830008,1800830004,1800830005,1800830006,1800830007" savepos="1" magic="1" fitsize="true" OnInit="Triones.Init" close="true">
+        <image id="BkImage1" image="1813100001" x="5" y="35" w="642" h="382" fitsize="true" />
+        <image id="BkImage2" image="3021000000" x="5" y="-50" w="500" h="500" fitsize="true" />
+        <wnd id="TrionesWnd" x=5 y=20 w=490 h=321>
+    </wnd>
+    <wnd id="InfoWnd" x=480 y=70 w=170 h=321>
+</wnd>
+        </dialog>
+        --------------------------------脚本界面------------------------------
+<script><![CDATA[
+local	trionesPlace =  {
+{40,250},
+{100,200},
+{170,180},
+{250,160},
+{310,230},
+{400,200},
+{380,100}
+}
+Triones = {}
+Triones.Init = function(this)
+local script = ""
+script = script .. [[<form default_parent="Triones,TrionesWnd">]]
+for i=1,7 do
+    if num >= i then
+    script = script .. [[<image id=TrionesPlace]]..i..[[ image=1803300022 x=]]..trionesPlace[i][1]..[[ y=]]..trionesPlace[i][2]..[[ w=28 h=28  fitsize=true revmsg=true param=]]..i..[[ OnMouseIn="Triones.MouseIn" OnMouseOut="Triones.MouseOut" OnLButtonUp="Triones.MouseUp" OnLButtonDown="Triones.MouseDown"/>]]
+else
+script = script .. [[<image id=TrionesPlace]]..i..[[ image=1820300008 x=]]..trionesPlace[i][1]..[[ y=]]..trionesPlace[i][2]..[[ w=28 h=28  fitsize=true revmsg=true param=]]..i..[[ />]]
+    end
+
+
+
+    end
+    script = script .. [[<image id=schedule1 image=1805400001 x=35 y=350 w=400 h=25 fitsize=true />]]
+script = script .. [[<image id=schedule2 image=1805400002 x=58 y=356 w=350 h=17 fitsize=true />]]
+
+script = script .. [[</form>]]
+GenFormByString(script)
+
+local script = "" .. [[<form default_parent="Triones,InfoWnd">]]
+script = script .. [[
+<image id=bgk1 image=1802900021 x=43 y=-40 w=60 h=77 fitsize=true />
+    <richedit id=text1 x=53 y=-3 w=150 h=30 text=]]..trionesName[num]..[[ text_color=RED font=SIMLI18 canedit=false align=left/>
+    <richedit id=text5 x=0 y=30 w=150 h=30 text="物理攻击:" text_color=ORANGE canedit=false align=left/>
+    <richedit id=text6 x=0 y=50 w=150 h=30 text="魔法攻击:" text_color=ORANGE canedit=false align=left/>
+    <richedit id=text7 x=0 y=70 w=150 h=30 text="道术攻击:" text_color=ORANGE canedit=false align=left/>
+    <richedit id=text2 x=55 y=30 w=150 h=30 text=]]..tipsProperty[num][1]..[[ text_color=ORANGE canedit=false align=left/>
+    <richedit id=text3 x=55 y=50 w=150 h=30 text=]]..tipsProperty[num][2]..[[ text_color=ORANGE canedit=false align=left/>
+    <richedit id=text4 x=55 y=70 w=150 h=30 text=]]..tipsProperty[num][3]..[[ text_color=ORANGE canedit=false align=left/>
+    <image id=bgk2 image=1808900005 x=-10 y=90 w=172 h=43 fitsize=true />
+    <richedit id=text8 x=40 y=100 w=150 h=30 text="特殊属性" text_color=RED font=SIMLI18 canedit=false align=left/>
+]]
+script = script .. [[</form>]]
+GenFormByString(script)
+-------------------tips提示-----------------------------------------------------
+
+for i=1,7 do
+    if i <= num then
+    local tip = "["
+tip = tip .. tipText("   "..trionesName[i].."\n", "#FF0000","SIMLI18")
+tip = tip .. tipLine() .. tipText("[属性]	\n\n","#00FA9A","system")
+tip = tip .. tipText("物理攻击：" .. tipsProperty[i][1].."	\n","#FFF000","system")
+tip = tip .. tipText("魔法攻击：" .. tipsProperty[i][2] .. "	\n","#FFF000","system")
+tip = tip .. tipText("道术攻击：" .. tipsProperty[i][3] .. "	\n","#FFF000","system")
+tip = tip.."{}]"
+local _Handle = GetWindow(0,"Triones,TrionesWnd,TrionesPlace"..i.."")
+GUI:WndSetTipInfo(_Handle,tip)
+else
+local tip = "["
+
+tip = tip .. tipText("未开启\n","#FF0000","SIMLI18")
+tip = tip.."{}]"
+local _Handle = GetWindow(0,"Triones,TrionesWnd,TrionesPlace"..i.."")
+GUI:WndSetTipInfo(_Handle,tip)
+end
+
+end
+
+Triones.ScheduleUpdata(num)
+end
+---------进度条更新暗示信息和进度更新------------------
+    Triones.ScheduleUpdata = function(num)
+local num = tonumber(num)
+
+local _Handle = GetWindow(0,"Triones,TrionesWnd,schedule2")
+GUI:WndSetCanRevMsg(_Handle,true)
+GUI:ImageSetDrawRect(_Handle,0,0.5,0,0.5)
+
+local tip = "["
+tip = tip .. tipText("				完成进度：50%				\n", "#FF0000","system")
+tip = tip .. tipLine() .. tipText("[属性]	\n\n","#FFF000","system")
+tip = tip .. tipText("物理攻击：" .. tipsProperty[num][1].."	\n","#FFF000","system")
+tip = tip .. tipText("魔法攻击：" .. tipsProperty[num][2] .. "	\n","#FFF000","system")
+tip = tip .. tipText("道术攻击：" .. tipsProperty[num][3] .. "	\n","#FFF000","system")
+tip = tip.."{}]"
+GUI:WndSetTipInfo(_Handle,tip)
+end
+
+Triones.wndClose = function()
+local _Handle = GetWindow(0,"Triones")
+wndClose(_Handle)
+end
+
+--------七星按钮更新信息按时信息-----------------------------
+    Triones.infoUpadta = function(num)
+local num = tostring(num)
+local tip = "["
+tip = tip .. tipText("完成进度：50%\n", "#FF0000","system")
+tip = tip .. tipLine() .. tipText("【属性】","#FF0000","system")
+tip = tip .. tipLine()
+tip = tip .. "{}]"
+local _Handle = GetWindow(0,"Triones,TrionesWnd,TrionesPlace"..num.."")
+GUI:WndSetCanRevMsg(_Handle,true)
+GUI:WndSetTipInfo(_Handle,tip)
+end
+
+-----------窗口事件------------------------------------------
+    Triones.MouseIn = function(this)				--鼠标移入
+ButtonSetImageID(this,"",1803300022)
+end
+
+Triones.MouseOut = function(this,param,x,y)	--鼠标移出
+ButtonSetImageID(this,"",1803300022)
+end
+
+Triones.MouseDown = function(this,param,x,y)	--鼠标左击点下
+ButtonSetImageID(this,"",1803300023)
+
+end
+
+Triones.MouseUp = function(this,param,x,y)		--鼠标左击弹起
+ButtonSetImageID(this,"",1803300022)
+local btnNum = WndGetParam(this)
+CL:ShowTypeMsg(1,tostring(btnNum))
+Triones.textUpdata(btnNum)
+end
+
+-----------显示文本更新----------------------------------------
+    Triones.textUpdata = function(btnNum)
+local _Handle = GetWindow(nil,"Triones,InfoWnd,text1")
+GUI:RichEditClear(_Handle)
+GUI:RichEditAppendString(_Handle,tostring(trionesName [btnNum]))
+for i=2,4 do
+    local _Handle = GetWindow(nil,"Triones,InfoWnd,text"..i)
+GUI:RichEditClear(_Handle)
+GUI:RichEditAppendString(_Handle,tostring(tipsProperty[btnNum][i-1]))
+
+end
+end
+
+]]></script>
+        </form>

@@ -1,0 +1,242 @@
+<form>
+<dialog id="RMB奖励系统" x="0" y="0" w="545" h="480" image="1808400000" fitsize=true center=true savepos=true OnInit=RMBSYS_jishou.Initialize>
+
+
+<richedit id="标题" x="220" y="50" w="300" h="30" text="首 爆 奖 励" font=SIMLI18 text_color="YELLOW" />
+<button id=关闭 x=490 y=40 image=1853530000 OnLButtonClick=RMBSYS_jishou.guanbi />
+</dialog>
+
+<script><![CDATA[
+RMBSYS_jishou = {}
+
+
+
+RMBSYS_jishou.Initialize = function(this)--声明一个函数
+xianshiindex = 1
+jishouindex = 1
+RMBindex = 1
+ybjishouindex = 1
+playerjishouindex = 1
+yongjiuindex = 1
+GONGCHENGindex = 1
+UI:Lua_GetPlayerSelfPropBase(ROLE_PROP_ROLENAME)
+player_name = LuaRet
+RMBSYS_jishou.sanrendianji()
+--RMBSYS_jishou.GONGCHENGbiaodan()
+--UI:Lua_LoadLuaFileForce("TipLayout.lua")
+end
+
+
+
+RMBSYS_jishou.sanrendianji = function(this)
+WndAddProperty(nil,"RMB奖励系统","导航按钮","1")
+local windows = {"散人福利","限时奖励①","限时奖励","神歌奖励","RMB点寄售"}
+for i = 1,#windows do
+if WndIsLive(nil,"RMB奖励系统,"..windows[i]) then
+WndCloseM(nil,"RMB奖励系统,"..windows[i])
+end
+end
+local str = "<form default_parent=RMB奖励系统>";
+y = 45
+local kjs = {
+{80,"编号","#00FF00"},
+{130,"装备名称","#FF66FF"},
+{130,"首爆奖励","#29D3A4"},
+{130,"获得玩家","#00BFFF"},
+--{105,"击杀状态","#00BFFF"},
+}
+str = str.."<wnd id=散人福利 x=15 y=48 >"
+
+--str = str.."<button id=RMB点换元宝 x=451 y=52 w=86 h=32 image=1830600038 text=RMB点换元宝 text_color=YELLOW 导航按钮=6 OnLButtnClick=RMBSYS_jishou.duihuanyuanbao />"
+str = str.."<button id=上一页 x=368 y=355 image=1800000154 OnLButtonClick=RMBSYS_jishou.shangyiye />"
+str = str.."<button id=下一页 x=458 y=355 image=1800000158 OnLButtonClick=RMBSYS_jishou.xiayiye />"
+str = str.."<image id=页数背景 x=396 y=357 w=60 h=25 fitsize=1 image=1803900020 />"
+str = str.."<edit id=页数 x=393 y=353 w=60 h=20 align=center />"
+str = str.."<static id=提示 x=31 y=335 w=700 h=20 text_color=#C8C8AA />"
+local x = 25
+for i = 1,#kjs do
+str = str.."<image id=框架"..i.." x="..(x).." y=45 w="..kjs[i][1].." h=30 fitsize=1 image=1800000163,1800000164,1800000165,1800000166,1800000171,1800000167,1800000168,1800000169,1800000170 />"
+str = str.."<edit id=标题"..i.." x="..(x).." y=45 w="..kjs[i][1].." h=20 align=center text="..kjs[i][2].." text_color=#C9BF96 />"
+x = x + kjs[i][1] - 2
+end
+
+y = y + 28
+for i1 = 1,10 do
+str = str.."<wnd id=子菜单"..i1.." x=0 y="..y.." >"
+x = 25
+for i = 1,#kjs do
+str = str.."<image id=框架"..i.." x="..(x).." y=0 w="..kjs[i][1].." h=30 fitsize=1 image=1800000163,1800000164,1800000165,1800000166,1800000171,1800000167,1800000168,1800000169,1800000170 />"
+str = str.."<edit id=内容"..i.." x="..(x).." y=0 w="..kjs[i][1].." h=20 align=center text_color="..kjs[i][3].." />"
+x = x + kjs[i][1] - 2
+end
+str = str .. "</wnd>";
+y = y + 25
+end
+str = str.."<static id=倒计时 x=150 y=380 w=200 h=20 text=活动已经结束 text_color=#00FF00 />"
+str = str .. "</wnd></form>";
+GenFormByString(str);
+
+StaticSetText(nil,"RMB奖励系统,散人福利,提示",sanrenjiesao)
+EditSetTextM(nil,"RMB奖励系统,散人福利,页数","1/"..math.ceil(#sanrenfuli_tbl / 10))
+RMBSYS_jishou.rmbupdate()
+if daojishitime > 0 then
+daojishi()
+WndAddTimer(nil,"RMB奖励系统,散人福利",1,1000,"daojishi")
+end
+
+end
+
+function js(s)
+s = tonumber(s)
+local h = math.floor(s / 3600)
+local m = math.floor((s - h * 3600) / 60)
+s = s - h * 3600 - m * 60
+return ""..h.."小时"..m.."分钟"..s.."秒"
+end
+
+
+function daojishi()
+StaticSetText(nil,"RMB奖励系统,散人福利,倒计时","活动结束时间："..js(daojishitime))
+daojishitime = daojishitime - 1
+if daojishitime <= 0 then
+WndDelTimer(nil,"RMB奖励系统,散人福利",1)
+StaticSetText(nil,"RMB奖励系统,散人福利,倒计时","活动已经结束")
+end
+end
+
+
+RMBSYS_jishou.rmbupdate = function(this)
+local str = "<form default_parent=RMB奖励系统,散人福利>";
+for i = 1,6 do
+if WndIsLive(nil,"RMB奖励系统,散人福利,钱图标"..i) then
+WndCloseM(nil,"RMB奖励系统,散人福利,钱图标"..i)
+end
+end
+
+local a = 1 + (jishouindex - 1) * 10
+local b = a + 9
+local c = 1
+local y = 119
+
+for i = a,b do
+if sanrenfuli_tbl[i] ~= nil then
+
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容1","No."..i)
+
+UI:Lua_GetItemTemplateHandleByKeyName(sanrenfuli_tbl[i][1])
+UI:Lua_GetItemTemplatePropByHandle(LuaRet, ITEM_PROP_NAME)
+
+
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容2",LuaRet)
+local str = ""
+for s = 1,#sanrenfuli_tbl[i][3] do
+UI:Lua_GetItemTemplateHandleByKeyName(sanrenfuli_tbl[i][3][s][1])
+UI:Lua_GetItemTemplatePropByHandle(LuaRet, ITEM_PROP_NAME)
+if s ~= #sanrenfuli_tbl[i][3] then
+str = str..LuaRet.."*"..sanrenfuli_tbl[i][3][s][2].." + "
+else
+str = str..LuaRet.."*"..sanrenfuli_tbl[i][3][s][2]
+end
+end
+
+if sanrenfuli_tbl[i][4] ~= 0 then
+str = str..""..sanrenfuli_tbl[i][4].."元宝+"..sanrenfuli_tbl[i][5].."万经验"
+end
+
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容3",""..str)
+if sanrenfuli_tbl[i][6] == "" then
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容4","暂无领取")
+else
+--EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容4","暂无领取")
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容4",""..sanrenfuli_tbl[i][6])
+end
+
+else
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容1","")
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容2","")
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容3","")
+EditSetTextM(nil,"RMB奖励系统,散人福利,子菜单"..c..",内容4","")
+
+end
+y = y + 38
+c = c + 1
+end
+
+--str = str .. "<image id=BOSS背景1 x="..boss_image[5][2].." y="..boss_image[5][3].." w="..boss_image[5][4].." h="..boss_image[5][5].." fitsize=1 image="..boss_image[5][1].."  />" --type=animate
+EditSetTextM(nil,"RMB奖励系统,散人福利,页数",tostring(jishouindex).."/"..math.ceil(#sanrenfuli_tbl / 10))
+str = str .. "</form>";
+GenFormByString(str);
+
+end
+
+RMBSYS_jishou.jinru = function(this)
+EditSetTextColor(this,"",mkcolor("RED"))
+end
+
+RMBSYS_jishou.duihuanyuanbao = function(this)
+UI:Lua_SubmitForm("QQ89589200首杀奖励表单", "抽奖", ""..jishouindex)
+end
+
+RMBSYS_jishou.huishoudianji = function(this)
+UI:Lua_SubmitForm("QQ89589200RMB寄售表单", "散人福利", ""..WndGetProperty(this,nil,"index"))
+end
+
+RMBSYS_jishou.huigoudianji = function(this)
+UI:Lua_SubmitForm("QQ89589200RMB寄售表单", "RMB回购", ""..WndGetProperty(this,nil,"index"))
+end
+
+
+RMBSYS_jishou.sanrenanxia = function(this)
+ImageSetImageID(this,nil,1600200005)
+end
+
+RMBSYS_jishou.sanrenjinru = function(this)
+ImageSetImageID(this,nil,1600200004)
+end
+RMBSYS_jishou.sanrentanqi = function(this)
+ImageSetImageID(this,nil,1600200004)
+end
+
+RMBSYS_jishou.sanrenlikai = function(this)
+if WndGetProperty(this,nil,"导航按钮") ~= WndGetProperty(nil,"RMB奖励系统","导航按钮") then
+ImageSetImageID(this,nil,1600200003)
+else
+ImageSetImageID(this,nil,1600200004)
+end
+end
+
+RMBSYS_jishou.duihuanRMB = function(this)
+UI:Lua_SubmitForm("QQ89589200RMB寄售表单", "除魔值换RMB", "")
+end
+
+
+
+
+RMBSYS_jishou.likai = function(this)
+EditSetTextColor(this,"",mkcolor("GOLD"))
+end
+
+RMBSYS_jishou.shangyiye = function(this)
+if jishouindex == 1 then
+return false
+end
+jishouindex = jishouindex - 1
+RMBSYS_jishou.rmbupdate()
+
+end
+
+RMBSYS_jishou.xiayiye = function(this)
+if jishouindex >= math.ceil(#sanrenfuli_tbl / 10) then
+return false
+end
+jishouindex = jishouindex + 1
+RMBSYS_jishou.rmbupdate()
+
+end
+
+RMBSYS_jishou.guanbi = function(this)
+WndClose(nil,"RMB奖励系统")
+end
+
+]]></script>
+</form>

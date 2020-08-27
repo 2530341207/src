@@ -1,0 +1,56 @@
+<form>
+    <dialog id="towerFrame" image="1853500000" w="792" h="570" fitsize="true" esc_close="true" close="true" center="true"  drag="true" OnInit="tower.Initialize">
+        <richedit id="title" x="360" y="40" w="100" h="30" text="叛   国" text_color="YELLOW" canedit="false"   font="SIMLI18"/>
+        <image id=seal image=3021290000 x=-20 y=100 w=400 h=400 fitsize=true type=animate/>
+        <image id=pet image=3021500000 x=-120 y=-30 w=600 h=600 fitsize=true type=animate/>
+
+        <wnd id=towerWnd x=320 y=100 w=400 h=400>
+    </wnd>
+</dialog>
+<script><![CDATA[
+tower = {}
+local text = {
+    "此界面的作用是让你脱离当前国家，但是脱离国家之前需要告诉你脱离国家的后果：",
+
+    "1.叛变国家之后你的所有守护灵都将自动封印脱离你！",
+    "2.你需要加入新的国家，重新抽取新国家的守护灵",
+    "3.叛变原来国家之后，原来国家的玩家击杀你,您的死亡掉落概率加大！",
+    "4.叛变国家需要花费5000元宝！",
+}
+tower.Initialize = function(this)
+local script = [[<form default_parent="towerFrame,towerWnd">]]
+for i=1,#text do
+    local y = (i-1) * 40
+if i == 1 then
+script = script .. [[<richedit id=text]]..i..[[ x=10 y=]]..y..[[ w=350 h=20 text=]]..text[i]..[[ text_color="YELLOW" canedit="false"  font="SIMLI18"/>]]
+else
+script = script .. [[<richedit id=text]]..i..[[ x=10 y=]]..y..[[ w=350 h=20 text=]]..text[i]..[[ text_color="RED" canedit="false"  font="SIMLI18"/>]]
+end
+script = script .. [[<button id=btn1 image=1857520076  x=50 y=200 w=85 h=85 text="" shine=true  OnLButtonClick="tower.submit" param=1 />]]
+script = script .. [[<button id=btn2 image=1857520064  x=150 y=200 w=85 h=85 text="" shine=true  OnLButtonClick="tower.submit" param=2 />]]
+
+end
+script = script .. [[</form>]]
+GenFormByString(script)
+end
+
+tower.submit = function(this)
+local num = WndGetParam(this)
+if tonumber(num) == 1 then
+MessageBox2(1,"你确定要叛国吗？请详细阅读按钮上方的文字！","tower.confirm()")
+else
+UI:Lua_SubmitForm("封灵塔表单","accept",tostring(num))
+end
+
+end
+
+tower.confirm = function()
+UI:Lua_SubmitForm("封灵塔表单","accept",tostring(1))
+end
+
+tower.close = function(this)
+
+WndClose(0,"towerFrame")
+end
+]]></script>
+        </form>

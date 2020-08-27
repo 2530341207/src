@@ -1,0 +1,460 @@
+<form>
+    <dialog id="resources" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" w="792" h="570" fitsize="true" esc_close="true" close="false" center="true"  drag="true" OnInit="resources.Initialize">
+        <image id="bgk1" image="1857400100" x="0" y="0" w="792" h="40" />
+        <image id="bgk2" image="1856700000" x="4" y="40" w="786" h="526" fitsize=true/>
+        <image id="bgk3" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=40 y=100 w=710 h=450 fitsize=true/>
+        <richedit id=txt1 x=360 y=10 w=72 h=30 text="国 家" text_color=RED align=center font=SIMLI18/>
+        <button id="colseBtn" image="1857410000" x="674" y="-27" w="139" h="128" OnLButtonClick="resources.close"/>
+        <wnd id=pagWnd1 x=40 y=60 w=710 h=490>
+        </wnd>
+        </dialog>
+<script><![CDATA[
+	resources = {}
+	local btnTxt = {
+		"国家",
+		"官职"
+	}
+
+	local donate = {
+		"捐献元宝",
+		"捐献元宝"
+	}
+	local donateIngot = {
+		"100",
+		"1000",
+	}
+	local offices = {
+		"国王",
+		"丞相",
+		"大将军",
+		"大司马",
+		"大都督"
+	}
+	local officesImg = {
+		1801800012,
+		1801800014,
+		1801800016,
+		1801800029
+	}
+	local officesColor = {
+
+		"SKYBLUE",
+		"PURPLE",
+		"SKYBLUE",
+		"PURPLE"
+	}
+	local wages = {
+		"日俸禄:",
+		"转生材料:",
+		"斗笠碎片:",
+		"五行碎片:"
+	}
+	local wagesNum = {
+		{"国库10%","50个","50个","50个"},
+		{"国库5%","30个","30个","30个"},
+		{"国库3%","20个","20个","20个"},
+		{"国库2%","10个","10个","10个"},
+		{"国库1%","5个","5个","5个"},
+	}
+	local ingotDonation = {
+		{"国家资源",1,"国家积分",5},
+		{"国家资源",1,"国家积分",50}
+	}
+
+	local tipsTxt = {
+		"1.右侧进度条满国家升级，每级国家有对应的国家buff!\n",
+		"2.进度条通过玩家捐赠元宝来提升!\n",
+		"3.捐赠元宝可获得国家经验和三国币(这里是元宝获取三国币的唯一途径)!\n",
+		"4.捐赠前五名可获得官职,每天22点刷新官职人选，上线获得俸禄(见国家官职界面)!\n"
+	}
+
+	resources.Initialize = function(this)
+		local script = [[<form default_parent="resources,pagWnd1">]]
+		for i=1,2 do
+			local x = (i-1)*67
+			local x1 = (i-1)*67 + 8
+			script = script .. [[<image id=btn]]..i..[[ image=1803700007 x=]]..x..[[ y=15 w=66 h=29  revmsg=true param=]]..tostring(i)..[[ OnLButtonUp="resources.up" fitsize=true/>]]
+			script = script .. [[<richedit id=txt]]..i..[[ x=]]..x1..[[ y=18 w=66 h=30 text=]]..btnTxt[i]..[[ text_color=YEllow align=center font=SIMLI18 />]]
+		end
+		script = script .. [[</form>]]
+		GenFormByString(script)
+		ButtonSetImageID(nil,"resources,pagWnd1,btn1",1803700005)
+		resources.sp()
+		resources.showWnd1()
+
+	end
+
+	resources.sp = function()
+		--切割传过来的字符串
+		countryTable = strsplit(str,"#")
+		countrySingle = {}
+		for i=1,3 do
+			countrySingle[i] = strsplit(countryTable[(i-1)*3 + 1],"国")
+		end
+
+	end
+
+	--点击按钮 按钮变色
+	resources.up = function(this,param)
+		local num = WndGetParam(this)
+		ButtonSetImageID(this,"",1803700005)
+		if num == 1 then
+			ButtonSetImageID(this,"",1803700005)
+			ButtonSetImageID(nil,"resources,pagWnd1,btn2",1803700007)
+			WndClose(nil,"resources,pagWnd1,showWnd2")
+			--WndClose(nil,"resources,pagWnd1,showWnd1",true)
+			resources.showWnd1()
+		else
+			ButtonSetImageID(this,"",1803700005)
+			ButtonSetImageID(nil,"resources,pagWnd1,btn1",1803700007)
+			--设置窗口可见
+			WndClose(nil,"resources,pagWnd1,showWnd1")
+			--WndClose(nil,"resources,pagWnd1,showWnd2",true)
+			resources.showWnd2()
+		end
+	end
+
+--点击按钮出现界面
+	resources.showWnd1 = function()
+
+		--添加新面板
+		local script = [[<form default_parent="resources,pagWnd1">]]
+		script = script .. [[<wnd id=showWnd1 x=0 y=40 w=710 h=480>]]
+		script = script .. [[<image id="bgk4" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=0 y=0 w=300 h=450 fitsize=true/>]]
+		script = script .. [[<image id="bgk5" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=300 y=0 w=410 h=450 fitsize=true/>]]
+		script = script .. [[<image id=bgkmb image=1803000001 x=302 y=2 w=406 h=446 fitsize=true/>]]
+		script = script .. [[<image id=bgk6 image=1856200000 x=3 y=3 w=294 h=444 fitsize=true/>]]
+		script = script .. [[<image id=bgk8 image=1856810000 x=3 y=3 w=294 h=444 fitsize=true/>]]
+		script = script .. [[<button id="levelCountry" image="1852400073" x="135" y="390" w="139" h="128" OnLButtonClick="resources.leave"/>]]
+		script = script .. [[<richedit id=leveltxt x=135 y=420 w=80 h=80 text=叛国 text_color=YELLOW align=center font=SIMLI18/>]]
+		--有国王时修改
+		script = script .. [[<image id=bgk7 image=3021400000 x=-90 y=-50 w=500 h=500 fitsize=true/>]]
+		script = script .. [[<image id=bgk9 image=1856230000 x=60 y=180 w=190 h=50 fitsize=true/>]]
+		script = script .. [[<edit id=txt9 x=60 y=160 w=190 h=50 text=虚位以待 text_color=YELLOW align=center font=SIMLI18/>]]
+		--国王名字
+		script = script .. [[<image id=bgk10 image=1813000040 x=10 y=10 w=50 h=100 fitsize=true/>]]
+		script = script .. [[<richedit id=txt10 x=25 y=20 w=30 h=70 text=]]..countrySingle[1][1]..[[王 text_color=PURPLE  align=center font=SIMLI18/>]]
+		script = script .. [[<image id=bgk11 image=1858750011 x=320 y=10 w=80 h=80 fitsize=true/>]]
+
+		script = script .. [[<image id=line image=1803900003 x=305 y=90 w=402 h=90 fitsize=true/>]]
+		script = script .. [[<image id=bgk12 image=1802400027 x=400 y=50 w=276 h=24 fitsize=true/>]]
+
+		script = script .. [[<image id=bgk13 image=1891000016 x=413 y=80 w=50 h=50 fitsize=true/>]]
+		script = script .. [[<image id=bgk14 image=1802400027 x=460 y=105 w=200 h=20 fitsize=true/>]]
+
+		script = script .. [[<image id=bgk15 image=1891000016 x=413 y=125 w=50 h=50 fitsize=true/>]]
+		script = script .. [[<image id=bgk16 image=1802400027 x=460 y=140 w=200 h=20 fitsize=true/>]]
+
+		--国库资金
+		script = script .. [[<image id=line2 image=1808300001	x=310 y=183	 w=300 h=50 fitsize=true/>]]
+
+		script = script .. [[<wnd id=rightWnd x=300 y=0 w=410 h=200>]]
+		--经验
+
+		--第一个国家经验显示
+		script = script .. [[<richedit id=txtLevel1 x=120 y=30 w=72 h=30 text=lv:]]..countryTable[2]..[[ text_color=YELLOW align=center font=SIMLI18/>]]
+
+		--第二个国家经验显示
+
+		script = script .. [[<richedit id=txtLevel2 x=200 y=90 w=72 h=30 text=lv:]]..countryTable[5]..[[ text_color=YELLOW align=center font=SIMLI18/>]]
+		--第三个国家经验显示
+		script = script .. [[<richedit id=txtLevel3 x=200 y=125 w=72 h=30 text=lv:]]..countryTable[8]..[[ text_color=YELLOW align=center font=SIMLI18/>]]
+		--国家
+		script = script .. [[<richedit id=txt11 x=50 y=43 w=40 h=40 text=]]..countrySingle[1][1]..[[ text_color=RED  align=center font=SIMLI18/>]]
+		script = script .. [[<richedit id=txt13 x=129 y=96 w=45 h=40 text=]]..countrySingle[2][1]..[[ text_color=GREENG  align=center font=SIMLI18/>]]
+		script = script .. [[<richedit id=txt15 x=128 y=140 w=45 h=40 text=]]..countrySingle[3][1]..[[ text_color=PURPLE   align=center font=SIMLI18/>]]
+
+		--国库
+		script = script .. [[<richedit id=treasury x=30 y=200 w=300 h=45 text="国库资金:]]..countryIngots..[[元宝" text_color=YELLOW  align=center font=SIMLI18/>]]
+
+		script = script .. [[</wnd>]]
+		--tips
+		script = script .. [[<image id=tips image=1803900002 x=680 y=10 w=19 h=19 fitsize=true revmsg=true OnMouseIn="resources.moveIn" OnMouseOut="resources.moveOut"/>]]
+
+		for i=1,2 do
+			local x = (i-1)*200 + 306
+			local x1 = x + 60
+			local x3 = x + 60
+			script = script .. [[<image id=bgk11]]..i..[[ image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=]]..x..[[ y=250 w=198 h=192 fitsize=true/>]]
+			script = script .. [[<image id=bgkt]]..i..[[ image=1855490000 x=]]..(x+2)..[[ y=252 w=194 h=188 fitsize=true/>]]
+			script = script .. [[<image id=bgkty]]..i..[[ image=1803900003 x=]]..x..[[ y=320 w=200 h=50 fitsize=true/>]]
+			script = script .. [[<image id=bgk19]]..i..[[ image=1857520015 x=]]..x..[[ y=250 w=198 h=40 fitsize=true/>]]
+
+			script = script .. [[<richedit id=txt17]]..i..[[ x=]]..x1..[[ y=258 w=100 h=40 text=]]..donate[i]..[[ text_color=YELLOW  align=center font=SIMLI18/>]]
+
+			for j=1,2 do
+				local x2 = x + (j-1)*80 +30
+				script = script .. [[<image id="icon]]..i..j..[[" x=]]..x2..[[ y=320 type=normal image=1906000016/>]]
+				script = script .. [[<itemctrl id="item]]..i..j..[[" x=]]..(x2+4)..[[ y=324 w=38 h=38 init_item=]]..ingotDonation[i][(j-1)*2 + 1]..[[ count=]]..ingotDonation[i][j*2]..[[ use_back=false invalid=true/>]]
+
+			end
+			script = script .. [[<image id=inotImg]]..i..[[ image=1851800016 x=]]..(x+50)..[[ y=368 w=31 h=17 fitsize=true/>]]
+			script = script .. [[<richedit id=ingotNum]]..i..[[ x=]]..(x+90)..[[ y=368 w=100 h=40 text=]]..donateIngot[i]..[[ text_color=YELLOW  align=center font=SIMLI18/>]]
+			script = script .. [[<button id=donateBtn]]..i..[[ image=1800000135 x=]]..x3..[[ y=390 text=捐献 revmsg=true  param=]]..i..[[ OnLButtonUp="resources.submit"/>]]
+		end
+		script = script .. [[</wnd>]]
+		script = script .. [[</form>]]
+
+		GenFormByString(script)
+
+		local _Handle = GetWindow(0,"resources,pagWnd1,showWnd1,tips")
+
+		--GUI:WndSetTipInfo(_Handle,tip)
+		--进度条显示
+		local imageXY ={
+							{112,167,167},
+							{55,109,144}
+		}
+
+		local editXY = {
+			{200,240,240},
+			{50,107,141}
+		}
+
+		for i=1,3 do
+			local _WndHandle =  GetWindow(0,"resources,pagWnd1,showWnd1,rightWnd")
+			local _Handle = GUI:ImageCreate(_WndHandle, "progress"..i, 1802400028, imageXY[1][i], imageXY[2][i])
+			if _Handle ~= nil then
+				local x = countryTable[(i-1)*3 + 3]
+				local y = countryLevel[tonumber(countryTable[(i-1)*3 + 2])]
+				GUI:ImageSetCheckPoint(_Handle, 0)
+				--msg(tostring(x)..":"..tostring(y))
+				GUI:ImageSetDrawRect(_Handle,0,x/y,0,1)
+			end
+
+			local _GUIHandle = GetWindow(0,"resources,pagWnd1,showWnd1,rightWnd")
+			local _Handle = GUI:RichEditCreate(_GUIHandle,"proportion"..i,editXY[1][i],editXY[2][i],200,40)
+			if _Handle ~= nil then
+				GUI:RichEditSetCurFont(_Handle,"SIMLI18")
+				GUI:RichEditAppendString(_Handle,tostring(countryTable[3+3*(i-1)]).."/"..tostring(countryLevel[tonumber(countryTable[2+3*(i-1)])]))
+			end
+		end
+
+		local _Handle = GetWindow(0,"resources,pagWnd1,showWnd1,txt9")
+		if listTable[1].name ~= nil then
+			--GUI:RichEditClear(_Handle)
+			GUI:EditSetTextM(_Handle,listUpate[1])
+		end
+
+	end
+
+	resources.showWnd2 = function()
+
+		--添加新面板
+		local script = [[<form default_parent="resources,pagWnd1">]]
+		script = script .. [[<wnd id=showWnd2 x=0 y=40 w=710 h=480>]]
+		script = script .. [[<richedit id=listTxt text=捐献前五 text_color=GOLD  x=100 y=10 w=150 h=30 align=center font=SIMLI18/>]]
+		script = script .. [[<wnd id=listWnd x=10 y=30 w=300 h=150>]]
+
+		local listNum = 0
+		if #listTable > 5 then
+			listNum = 5
+		else
+			listNum = #listTable
+		end
+
+		for i=1,listNum do
+			local name =  listTable[i].name
+			local integral = listTable[i].integral
+			local y = (i-1)*30 + 10
+			script = script .. [[<richedit id=listTxt]]..i..[[ text="]]..i..[[.]]..name..[[:]]..integral..[[元宝" text_color=GOLD  x=20 y=]]..y..[[ w=250 h=30 align=center font=SIMLI18/>]]
+		end
+		script = script .. [[</wnd>]]
+		script = script .. [[<image id=kingContent image=1854100010 x=270 y=30 w=300 h=150 fitsize=true/>]]
+		script = script .. [[<image id=kingTxtBgk image=1857110000 x=280 y=20 w=100 h=30 fitsize=true/>]]
+		script = script .. [[<richedit id=kingName text=]]..offices[1]..[[ text_color= GOLD  x=310 y=23 w=73 h=30 align=center font=SIMLI18/>]]
+		script = script .. [[<image id=kingBgkImg image=1810100139 x=300 y=70 w=60 h=60 fitsize=true/>]]
+		script = script .. [[<image id=kingBgk image=1805700002 x=270 y=50 w=124 h=90 fitsize=true/>]]
+		script = script .. [[<image id=kingBgk1 image=1857070000 x=280 y=125 w=100 h=50 fitsize=true/>]]
+
+		script = script .. [[<edit id=kingNameTxt text=虚位以待 text_color= GOLD  x=280 y=115 w=100 h=50 align=center font=SIMLI18/>]]
+
+		script = script .. [[<wnd id=kingWnd x=400 y=30 w=200 h=150>]]
+		script = script .. [[<richedit id=kingTxt x=30 y=-15 w=80 h=30 text=国王权限 text_color=YELLOW font=SIMLI18/>]]
+		for i=1,4 do
+			local y=(i-1)*30 + 10
+			script = script .. [[<richedit id=kingTxt2]]..i..[[ x=10 y=]]..y..[[ w=200 h=20 text=]]..wages[i]..wagesNum[1][i]..[[ text_color=WHITE font=SIMLI18/>]]
+		end
+		script = script .. [[</wnd>]]
+		for i=1,4 do
+			local x=(i-1)*175 + 7
+			local x1=(i-1)*175 + 60
+			script = script .. [[<image id=officesBgk]]..i..[[ image=1805900006 x=]]..x..[[ y=195 w=173 h=250 fitsize=true/>]]
+
+			script = script .. [[<image id=officesBgkTitle]]..i..[[ image=1806500008 x=]]..(x+48)..[[ y=235 w=73 h=66 fitsize=true/>]]
+			script = script .. [[<image id=officesBgkTitle1]]..i..[[ image=1850400038 x=]]..(x+60)..[[ y=248 w=46 h=46 fitsize=true/>]]
+			script = script .. [[<image id=officesBgkTitle3]]..i..[[ image=]]..officesImg[i]..[[ x=]]..(x+60)..[[ y=248 w=46 h=46 fitsize=true/>]]
+
+			if i==1 then
+				script = script .. [[<richedit id=officeTxt]]..i..[[ text=]]..offices[i+1]..[[ text_color=]]..officesColor[i]..[[ x=]]..(x+65)..[[ y=215 w=73 h=30 align=center font=SIMLI18/>]]
+				script = script .. [[<richedit id=permissions]]..i..[[ text=]]..offices[i+1]..[[权限 text_color=YELLOW  x=]]..(x+40)..[[ y=335 w=100 h=30 align=center font=SIMLI18/>]]
+			else
+				script = script .. [[<richedit id=officeTxt]]..i..[[ text=]]..offices[i+1]..[[ text_color=]]..officesColor[i]..[[ x=]]..(x+55)..[[ y=215 w=73 h=30 align=center font=SIMLI18/>]]
+				script = script .. [[<richedit id=permissions]]..i..[[ text=]]..offices[i+1]..[[权限 text_color=YELLOW  x=]]..(x+35)..[[ y=335 w=100 h=30 align=center font=SIMLI18/>]]
+			end
+			script = script .. [[<image id=kingNameBgk]]..i..[[ image=1857070000 x=]]..(x+33)..[[ y=290 w=100 h=40 fitsize=true/>]]
+
+			script = script .. [[<edit id=kingNameTxt]]..i..[[ text=虚位以待 text_color=RED  x=]]..(x+33)..[[ y=285 w=100 h=40 align=center font=SIMLI18/>]]
+
+			script = script .. [[<wnd id=txtWnd]]..i..[[ x=]]..(x+10)..[[ y=350 w=150 h=90>]]
+			for j=1,3 do
+				local y=(j-1)*30 + 10
+				script = script .. [[<richedit id=txt2]]..j..[[ x=10 y=]]..y..[[ w=150 h=20 text=]]..wages[j]..wagesNum[i+1][j]..[[ text_color=WHITE font=SIMLI18/>]]
+			end
+		script = script .. [[</wnd>]]
+
+		end
+		script = script .. [[</wnd>]]
+		script = script .. [[</form>]]
+		GenFormByString(script)
+		--官职人选显示
+		local _Handle = GetWindow(0,"resources,pagWnd1,showWnd2,kingNameTxt")
+		if listTable[1].name ~= nil then
+			--GUI:RichEditClear(_Handle)
+			GUI:EditSetTextM(_Handle,listUpate[1])
+		end
+
+		for i=1,(#listTable - 1) do
+			local _Handle = GetWindow(0,"resources,pagWnd1,showWnd2,kingNameTxt"..i)
+			if listTable[i+1].name ~= nil then
+				--GUI:RichEditClear(_Handle)
+				GUI:EditSetTextM(_Handle,listUpate[i+1])
+			end
+		end
+	end
+
+	resources.upData = function()
+		resources.sp()
+		--修改进度条，等级，比例
+
+		for i=1,3 do
+			local _Handle =  GetWindow(0,"resources,pagWnd1,showWnd1,rightWnd,progress"..i)
+			if _Handle ~= nil then
+				local x = countryTable[(i-1)*3 + 3]
+				local y = countryLevel[tonumber(countryTable[(i-1)*3 + 2])]
+
+				GUI:WndSetCanRevMsg(_Handle,true)
+				GUI:ImageSetDrawRect(_Handle,0,x/y,0,1)
+			end
+
+			local _Handle = GetWindow(0,"resources,pagWnd1,showWnd1,rightWnd,txtLevel"..i)
+			if _Handle ~= nil then
+				local lv = countryTable[(i-1)*3 + 2]
+
+				GUI:RichEditClear(_Handle)
+				GUI:RichEditAppendString(_Handle,"lv:"..lv)
+			end
+
+			local _Handle = GetWindow(0,"resources,pagWnd1,showWnd1,rightWnd,proportion"..i)
+			if _Handle ~= nil then
+				local x = countryTable[(i-1)*3 + 3]
+				local y = countryLevel[tonumber(countryTable[(i-1)*3 + 2])]
+
+				GUI:RichEditClear(_Handle)
+				GUI:RichEditAppendString(_Handle,x.."/"..y)
+			end
+		end
+
+		local _Handle = GetWindow(0,"resources,pagWnd1,showWnd1,rightWnd,treasury")
+		if _Handle ~= nil then
+			GUI:RichEditClear(_Handle)
+			GUI:RichEditAppendString(_Handle,"国库资金:"..countryIngots.."元宝")
+		end
+
+		--排行榜
+
+
+		local listNum = 0
+		if #listTable > 5 then
+			listNum = 5
+		else
+			listNum = #listTable
+		end
+
+		for i=1,listNum do
+			local name =  listTable[i].name
+
+			local integral = listTable[i].integral
+
+			local y = (i-1)*30 + 10
+			local _Handle = GetWindow(0,"resources,pagWnd1,showWnd2,listWnd,listTxt"..i)
+			if _Handle ~= nil then
+
+				GUI:RichEditAppendString(_Handle,""..i.."."..name..":"..integral.."元")
+			end
+		end
+
+
+
+	end
+
+	resources.moveIn = function(this)
+
+		local _ParentHandle = GetWindow(0,"resources,pagWnd1,showWnd1")
+		local _Handle = GUI:WndCreateWnd(_ParentHandle,"tipsWnd",0,300,40)
+
+		if _Handle ~= nil then
+			GUI:WndSetSizeM(_Handle,100,50)
+		end
+
+		local _ImgHandle = GUI:ImageCreate(_Handle,"tipsBgk",1830900001,0,0)
+		if _ImgHandle ~= nil then
+			GUI:ImageSetFitSize(_ImgHandle,true)
+			GUI:WndSetSizeM(_ImgHandle,400,200)
+
+		end
+		for i=1,4 do
+			if i == 2 then
+				local y = 40+30*(i-1)
+				local _EditHandle = GUI:RichEditCreate(_Handle,"tipsTxt"..i,10,y,380,30)
+				if _EditHandle ~= nil then
+					GUI:RichEditSetCurFont(_EditHandle,"SIMLI18")
+					GUI:RichEditSetDefaultTextColor(_EditHandle,GUI:MakeARGB(255,0,100,0))
+					GUI:RichEditClear(_EditHandle)
+					GUI:RichEditAppendString(_EditHandle,tipsTxt[i])
+
+				end
+			elseif i == 1 then
+				local y = 30+30*(i-1)
+				local _EditHandle = GUI:RichEditCreate(_Handle,"tipsTxt"..i,10,y,380,30)
+				if _EditHandle ~= nil then
+					GUI:RichEditSetCurFont(_EditHandle,"SIMLI18")
+					GUI:RichEditSetDefaultTextColor(_EditHandle,GUI:MakeARGB(255,220,20,60))
+					GUI:RichEditClear(_EditHandle)
+					GUI:RichEditAppendString(_EditHandle,tipsTxt[i])
+				end
+			else
+				local y = 95+40	*(i-3)
+				local _EditHandle = GUI:RichEditCreate(_Handle,"tipsTxt"..i,10,y,380,30)
+				if _EditHandle ~= nil then
+					GUI:RichEditSetCurFont(_EditHandle,"SIMLI18")
+					GUI:RichEditSetDefaultTextColor(_EditHandle,GUI:MakeARGB(255,255,165,0))
+					GUI:RichEditClear(_EditHandle)
+					GUI:RichEditAppendString(_EditHandle,tipsTxt[i])
+				end
+			end
+
+ 		end
+
+	end
+
+	resources.moveOut = function(this)
+		local _Handle = GetWindow(0,"resources,pagWnd1,showWnd1,tipsWnd")
+		GUI:WndClose(_Handle)
+	end
+
+	resources.submit = function(this)
+		local num = WndGetParam(this)
+		UI:Lua_SubmitForm("三国表单","receive",tostring(num))
+	end
+
+	resources.close = function(this)
+		WndClose(0,"resources")
+	end
+
+	resources.leave = function(this)
+		UI:Lua_SubmitForm("封灵塔表单","main","")
+		WndClose(0,"resources")
+	end
+]]></script>
+</form>

@@ -1,0 +1,144 @@
+<form>
+    <dialog id="resources" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" w="792" h="570" fitsize="true" esc_close="true" close="false" center="true"  drag="true" OnInit="resources.Initialize">
+        <image id="bgk1" image="1857400100" x="0" y="0" w="792" h="40" />
+        <image id="bgk2" image="1856700000" x="4" y="40" w="786" h="526" fitsize=true/>
+        <image id="bgk3" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=40 y=100 w=710 h=450 fitsize=true/>
+        <richedit id=txt1 x=360 y=10 w=72 h=30 text=国家 text_color=RED align=center font=SIMLI18/>
+        <button id="colseBtn" image="1857410000" x="674" y="-27" w="139" h="128" OnLButtonClick="resources.close"/>
+        <wnd id=pagWnd1 x=40 y=60 w=710 h=490>
+        <wnd id=showWnd2 x=0 y=40 w=710 h=680>
+    </wnd>
+    <wnd id=showWnd1 x=0 y=40 w=710 h=680>
+</wnd>
+
+        </wnd>
+
+
+        </dialog>
+<script><![CDATA[
+resources = {}
+local btnTxt = {
+    "国家信息",
+    "国家官职"
+}
+local countryKing = {
+    "魏王",
+    "蜀王",
+    "吴王"
+}
+local country = {
+    "魏",
+    "蜀",
+    "吴"
+}
+local donate = {
+    "捐献金币",
+    "捐献元宝"
+}
+resources.Initialize = function(this)
+local script = [[<form default_parent="resources,pagWnd1">]]
+for i=1,2 do
+    local x = (i-1)*67
+local x1 = (i-1)*67 + 8
+script = script .. [[<image id=btn]]..i..[[ image=1808800021 x=]]..x..[[ y=15 w=66 h=29  revmsg=true param=]]..tostring(i)..[[ OnLButtonUp="resources.up"/>]]
+script = script .. [[<richedit id=txt]]..i..[[ x=]]..x1..[[ y=22 w=66 h=30 text=]]..btnTxt[i]..[[ text_color=YEllow align=center font=system />]]
+end
+script = script .. [[</form>]]
+GenFormByString(script)
+ButtonSetImageID(nil,"resources,pagWnd1,btn1",1808800019)
+resources.showWnd1()
+end
+--点击按钮 按钮变色
+resources.up = function(this,param)
+local num = WndGetParam(this)
+ButtonSetImageID(this,"",1808800019)
+if num == 1 then
+ButtonSetImageID(this,"",1808800019)
+ButtonSetImageID(nil,"resources,pagWnd1,btn2",1808800021)
+WndSetVisible(nil,"resources,pagWnd1,showWnd2",false)
+WndSetVisible(nil,"resources,pagWnd1,showWnd1",true)
+resources.showWnd1()
+else
+ButtonSetImageID(this,"",1808800019)
+ButtonSetImageID(nil,"resources,pagWnd1,btn1",1808800021)
+--设置窗口可见
+WndSetVisible(nil,"resources,pagWnd1,showWnd1",false)
+WndSetVisible(nil,"resources,pagWnd1,showWnd2",true)
+resources.showWnd2()
+end
+end
+
+--点击按钮出现界面
+resources.showWnd1 = function()
+
+--添加新面板
+local script = [[<form default_parent="resources,pagWnd1,showWnd1">]]
+script = script .. [[<image id="bgk4" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=0 y=0 w=300 h=450 fitsize=true/>]]
+script = script .. [[<image id="bgk5" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=300 y=0 w=410 h=450 fitsize=true/>]]
+script = script .. [[<image id=bgk6 image=1856200000 x=3 y=3 w=294 h=444 fitsize=true/>]]
+script = script .. [[<image id=bgk8 image=1856810000 x=3 y=3 w=294 h=444 fitsize=true/>]]
+--有国王时修改
+script = script .. [[<image id=bgk7 image=1856280000 x=40 y=90 w=250 h=250 fitsize=true/>]]
+script = script .. [[<image id=bgk9 image=1856230000 x=60 y=180 w=190 h=50 fitsize=true/>]]
+script = script .. [[<richedit id=txt9 x=120 y=193 w=72 h=30 text=虚位以待 text_color=YELLOW align=center font=SIMLI18/>]]
+--国王名字
+script = script .. [[<image id=bgk10 image=1813000040 x=10 y=10 w=50 h=100 fitsize=true/>]]
+script = script .. [[<richedit id=txt10 x=25 y=20 w=30 h=70 text=]]..countryKing[1]..[[ text_color=WHITE  align=center font=SIMLI18/>]]
+script = script .. [[<image id=bgk11 image=1858750011 x=320 y=10 w=80 h=80 fitsize=true/>]]
+script = script .. [[<richedit id=txt11 x=348 y=45 w=40 h=40 text=]]..country[1]..[[ text_color=RED  align=center font=SIMLI18/>]]
+
+script = script .. [[<image id=line image=1803900003 x=305 y=90 w=402 h=90 fitsize=true/>]]
+script = script .. [[<image id=bgk12 image=1802400027 x=400 y=50 w=276 h=24 fitsize=true/>]]
+script = script .. [[<richedit id=txt12 x=500 y=50 w=40 h=43 text="0/20" text_color=WHITE  align=center font=SIMLI18/>]]
+
+
+
+script = script .. [[<image id=bgk13 image=1802700028 x=420 y=90 w=45 h=40 fitsize=true/>]]
+script = script .. [[<image id=bgk14 image=1802400027 x=460 y=105 w=200 h=20 fitsize=true/>]]
+script = script .. [[<richedit id=txt13 x=428 y=97 w=45 h=40 text=]]..country[2]..[[ text_color=GREENG  align=center font=SIMLI18/>]]
+script = script .. [[<richedit id=txt14 x=550 y=107 w=40 h=43 text="0/20" text_color=WHITE  align=center font=system/>]]
+
+script = script .. [[<image id=bgk15 image=1802700028 x=420 y=125 w=45 h=40 fitsize=true/>]]
+script = script .. [[<image id=bgk16 image=1802400027 x=460 y=140 w=200 h=20 fitsize=true/>]]
+
+script = script .. [[<richedit id=txt15 x=428 y=133 w=45 h=40 text=]]..country[3]..[[ text_color=PURPLE   align=center font=SIMLI18/>]]
+script = script .. [[<richedit id=txt16 x=550 y=141 w=45 h=40 text="0/20" text_color=WHITE  align=center font=system/>]]
+--国库资金
+script = script .. [[<image id=line2 image=1804900002 x=310 y=190 w=400 h=60 fitsize=true/>]]
+script = script .. [[<richedit id=txt17 x=350 y=200 w=100 h=40 text="国库资金:" text_color=YELLOW  align=center font=SIMLI18/>]]
+
+for i=1,2 do
+    local x = (i-1)*200 + 306
+local x1 = x + 60
+local x3 = x + 60
+script = script .. [[<image id=bgk11]]..i..[[ image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" x=]]..x..[[ y=250 w=198 h=192 fitsize=true/>]]
+script = script .. [[<image id=bgk19]]..i..[[ image=1857520015 x=]]..x..[[ y=250 w=198 h=40 fitsize=true/>]]
+script = script .. [[<richedit id=txt17]]..i..[[ x=]]..x1..[[ y=258 w=100 h=40 text=]]..donate[i]..[[ text_color=YELLOW  align=center font=SIMLI18/>]]
+for j=1,2 do
+    local x2 = x + (j-1)*80 +30
+script = script .. [[<image id="icon]]..i..j..[[" x=]]..x2..[[ y=320 type=normal image=1906000016/>]]
+script = script .. [[<itemctrl id="item]]..i..j..[[" x=]]..(x2+4)..[[ y=324 w=38 h=38 init_item=100元宝 use_back=false invalid=true/>]]
+
+end
+script = script .. [[<button id=donateBtn]]..i..[[ image=1800000135 x=]]..x3..[[ y=380 text=捐献 revmsg=true  param=]]..i..[[ OnLButtonUp="resources.submit"/>]]
+end
+
+script = script .. [[</form>]]
+
+GenFormByString(script)
+end
+
+resources.showWnd2 = function()
+
+--添加新面板
+local script = [[<form default_parent="resources,pagWnd1,showWnd2">]]
+script = script .. [[<image id="bgk12" image="1856700000" x=0 y=0 w=300 h=450 fitsize=true/>]]
+script = script .. [[</form>]]
+GenFormByString(script)
+end
+
+resources.close = function(this)
+WndClose(0,"resources")
+end
+]]></script>
+        </form>

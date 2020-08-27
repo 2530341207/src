@@ -1,0 +1,19 @@
+<form>
+    <dialog id="towerFrame" image="1857420100,1857420102,1857420106,1857420108,1857420104,1857420101,1857420107,1857420103,1857420105" w="792" h="570" fitsize="true" esc_close="true" close="false" center="true"  drag="true" OnInit="tower.Initialize">
+        <image id="bgk1" image="1857400100" x="0" y="0" w="792" h="40" />
+        <image id="bgk2" image="1857500000" x="4" y="40" w="786" h="526" fitsize=true/>
+		
+        <button id="colseBtn" image="1857410000" x="674" y="-27" w="139" h="128" OnLButtonClick="tower.close"/>
+    </dialog>
+    <script><![CDATA[
+    tower = {}
+    tower.Initialize = function(this)
+
+    end
+
+    tower.close = function(this)
+    CL:ShowTypeMsg(1,"1")
+    WndClose(0,"towerFrame")
+    end
+    ]]></script>
+</form>

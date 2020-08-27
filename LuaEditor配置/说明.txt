@@ -1,0 +1,4 @@
+这个配置文件可使LuaEdtior程序提示神途脚本接口函数.
+1.解压后的luaKeywords.lua替换LuaEditor安装目录下面的luaKeywords.lua.
+2.运行LuaEdtior程序, 在菜单的选项->配置自定义函数->导入, 导入解压后的user_function.txt文件.
+如果luaKeywords.lua替换时, LuaEdtior已打开, 需要在替换文件后, 关闭程序后再打开LuaEdtior, 才能使Lua语法提示生效.
